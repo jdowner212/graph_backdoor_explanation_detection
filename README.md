@@ -6,7 +6,7 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 
 ## 1. Setup environment
 
-	a. Navigate to /repo
+	a. Navigate to repository
 	b. Run the following from the command line:
 		conda create --name graph_backdoor_detection python=3.8.16
 		pip install -r requirements.txt
@@ -16,21 +16,21 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 	a. Run this command to get path to installed torch_geometric package: 
 		pip show torch-geometric | grep Location | awk '{print $2}' | sed 's|$|/torch_geometric|'
 
-	b. Navigate to /repo_pub/setup and open modify_torch_geometric_script.py. 
+	b. Navigate to /setup and open modify_torch_geometric_script.py. 
 		i. Change first path to above terminal output
-		ii. Change second path to /path/to/repo_pub/setup/modified_torch_geometric_files
+		ii. Change second path to /path/to/repository/setup/modified_torch_geometric_files
 		iii. Save changes
 	
 	c. From command line, run 
 		-python setup/modify_torch_geometric_script.py
 	
 
-3. Open utils/config.py and change root_dir to path/to/repo
+3. Open utils/config.py and change root_dir to path/to/repository
 
 
 # RUN
 
-## Choose attack type, dataset, etc. (See repo/src/run.py for possible input arguments.)
+## Choose attack type, dataset, etc. (See /src/run.py for possible input arguments.)
 
 	- Main choices:
 
@@ -40,7 +40,7 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 		--attack_target_label (options: 0, 1)
 		--poison_rate (options: any float between 0 and 1)
 		--dataset (options: MUTAG, AIDS, IMDB-BINARY, PROTEINS)
-		--model_hyp_set (Choice of pre-defined hyperparameter sets for GNN training. Typical options are A, B, or C, but may depend on dataset choice. See /repo/src/utils/config.py for all options -- feel free to change or add your own.)
+		--model_hyp_set (Choice of pre-defined hyperparameter sets for GNN training. Typical options are A, B, or C, but may depend on dataset choice. See /src/utils/config.py for all options -- feel free to change or add your own.)
    
 	- Note: not all attack configurations will succeed. Experiment to find settings that work.
 
