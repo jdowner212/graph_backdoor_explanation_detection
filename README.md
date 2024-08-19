@@ -31,8 +31,11 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 RUN ATTACK/EXPLAIN/DETECT
 
 1. Choose attack type, dataset, etc.
+2. 
 	a. See repo/src/run.py for possible input arguments.
+
 		Main choices:
+
 			--backdoor_type (options: random, adaptive, clean_label)
 			----> if 'random', can also choose graph_synthesis method (options: ER (Erdos-Renyi), SW (Small World), PA (Preferential Attachment)) 
 			--trigger_size (options: any integer > 0)
@@ -40,6 +43,7 @@ RUN ATTACK/EXPLAIN/DETECT
 			--poison_rate (options: any value in [0,1])
 			--dataset (options: MUTAG, AIDS, IMDB-BINARY, PROTEINS)
 			--model_hyp_set (Choice of pre-defined hyperparameter sets for GNN training. Typical options are A, B, or C, but may depend on dataset choice. See /repo/src/utils/config.py for all options -- feel free to change or add your own.)
+   
 		Note: not all attack configurations will succeed. Experiment to find settings that work.
 
 	c. Examples:
