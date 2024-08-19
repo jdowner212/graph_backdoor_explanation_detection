@@ -6,26 +6,30 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 
 ## 1. Setup environment
 
-	a. Navigate to repository
+	a. Navigate to desired repository location
 	b. Run the following from the command line:
 		conda create --name graph_backdoor_detection python=3.8.16
-		pip install -r requirements.txt
+		git clone https://github.com/jdowner212/graph_backdoor_explanation_detection.git
+		cd graph_backdoor_explanation_detection
+		pip install -r setup/requirements.txt
+
+## 3. Set repository path for code to reference
+
+	- Run the following from the command line:
+		repository_path = $(echo $(pwd))
+		sed -i "s|root_dir = .*|root_dir = '$repository_path'|" $(pwd)/src/utils/config.py
+
 
 ## 2. Make necessary modifications to installed torch_geometric package
 
-	a. Run this command to get path to installed torch_geometric package: 
-		pip show torch-geometric | grep Location | awk '{print $2}' | sed 's|$|/torch_geometric|'
-
-	b. Navigate to /setup and open modify_torch_geometric_script.py. 
-		i. Change first path to above terminal output
-		ii. Change second path to /path/to/repository/setup/modified_torch_geometric_files
-		iii. Save changes
-	
-	c. From command line, run 
-		-python setup/modify_torch_geometric_script.py
+	- Run the following from the command line: 
+		torch_geometric_location=$(pip show torch-geometric | grep Location | awk '{print $2}' | sed 's|$|/torch_geometric|')
+		setup_path = $(echo $(pwd)/setup/modified_torch_geometric_files)
+		sed -i "s|dir_to_modify = .*|dir_to_modify = '$torch_geometric_location'|" $(pwd)/setup/modify_torch_geometric_script.py
+		sed -i "s|modified_files_dir = .*|modified_files_dir = '$setup_path'|" $(pwd)/setup/modify_torch_geometric_script.py
+		python setup/modify_torch_geometric_script.py
 	
 
-3. Open utils/config.py and change root_dir to path/to/repository
 
 
 # RUN
