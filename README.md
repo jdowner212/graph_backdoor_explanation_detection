@@ -28,7 +28,7 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 3. Open utils/config.py and change root_dir to path/to/repo
 
 
-# RUN ATTACK/EXPLAIN/DETECT
+# RUN
 
 ## Choose attack type, dataset, etc. (See repo/src/run.py for possible input arguments.)
 
