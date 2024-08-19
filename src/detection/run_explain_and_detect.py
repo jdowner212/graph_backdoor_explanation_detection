@@ -3,8 +3,10 @@ import argparse
 import os
 import sys
 
-current_dir = os.getcwd()
+current_dir = os.path.abspath(os.path.dirname(__file__))
 root_dir = os.path.dirname(current_dir)
+print('RUN EXLPAIN curren_dir:',current_dir)
+
 sys.path.append(current_dir)
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))

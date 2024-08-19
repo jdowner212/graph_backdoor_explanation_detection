@@ -1,5 +1,5 @@
 ''' SET TO REPOSITORY PATH '''
-root_dir = '/Users/janedowner/Desktop/Desktop/IDEAL/Project_1/repo_pub'
+root_dir = '/path/to/repository'
 
 
 src_dir     = f'{root_dir}/src'

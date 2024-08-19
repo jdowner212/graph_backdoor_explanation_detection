@@ -1,8 +1,8 @@
 import os
 import sys
 # Get the absolute path to the root_dir
-current_dir = os.path.dirname(os.path.abspath(__file__))
-# print('RUN current_dir:',current_dir)
+current_dir = os.path.abspath(os.path.dirname(__file__))
+print('RUN current_dir:',current_dir)
 root_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
@@ -29,6 +29,7 @@ hyp_dict_backdoor_adaptive= get_info('hyp_dict_backdoor_adaptive')
 hyp_dict_clean    = get_info('hyp_dict_clean')
 data_shape_dict   = get_info('data_shape_dict')
 src_dir     = get_info('src_dir')
+print('src_dir:',src_dir)
 data_dir    = get_info('data_dir')
 explain_dir = get_info('explain_dir')
 train_dir   = get_info('train_dir')
@@ -146,13 +147,15 @@ def main():
     if run_attack==True:
         if backdoor_type == 'adaptive':
             if args.load_or_train_generator == 'train':
-                arguments = ['python','attack/run_build_adaptive_generator.py']
+                assert os.path.exists(f'{src_dir}/attack/run_build_adaptive_generator.py')
+                arguments = ['python',f'{src_dir}/attack/run_build_adaptive_generator.py']
                 arguments += ['--attack_target_label',attack_target_label,'--contin_or_scratch',contin_or_scratch, '--dataset',dataset, '--poison_rate',poison_rate,
                             '--gen_rounds',gen_rounds, '--load_or_train_benign_model',load_or_train_benign_model, '--seed',seed, 
                             '--trigger_size',trigger_size]#, '--device',device]
                 subprocess.run(arguments)
         
-        arguments = ['python','attack/run_attack.py']
+        assert os.path.exists(f'{src_dir}/attack/run_attack.py')
+        arguments = ['python',f'{src_dir}/attack/run_attack.py']
         arguments += ['--attack_target_label',attack_target_label, '--backdoor_type',backdoor_type, '--contin_or_scratch',contin_or_scratch, '--dataset',dataset,
                       '--ER_graph_P', ER_graph_P, '--poison_rate',poison_rate,# '--gen_alg_v', gen_alg_v, #'--gen_rounds', gen_rounds, 
                       '--graph_type',graph_type,
@@ -167,7 +170,8 @@ def main():
         subprocess.run(arguments)
 
     if run_explain==True:
-        arguments = ['python','detection/run_explain_and_detect.py']
+        assert os.path.exists(f'{src_dir}/detection/run_explain_and_detect.py')
+        arguments = ['python',f'{src_dir}/detection/run_explain_and_detect.py']
         arguments += ['--attack_target_label',attack_target_label, '--backdoor_type',backdoor_type, '--contin_or_scratch',contin_or_scratch, '--dataset',dataset,
                       '--edge_reduction',edge_reduction, '--edge_size',edge_size, '--edge_ent',edge_ent, '--ER_graph_P',ER_graph_P, '--explain_lr',explain_lr, 
                       '--explainer_epochs',explainer_epochs, '--explanation_type',explanation_type, '--poison_rate',poison_rate, #'--gen_alg_v',gen_alg_v, 

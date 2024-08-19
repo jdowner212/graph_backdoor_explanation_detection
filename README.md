@@ -62,6 +62,6 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 
 ## Examples:
 
-	python src/run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type random --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
-	python src/run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type adaptive --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4
-	python src/run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type clean_label --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
+	python run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type random --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
+	python run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type adaptive --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4
+	python run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type clean_label --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
