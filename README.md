@@ -16,17 +16,29 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 ## 3. Set repository path for code to reference
 
 	- Run the following from the command line:
-		repository_path = $(echo $(pwd))
-		sed -i "s|root_dir = .*|root_dir = '$repository_path'|" $(pwd)/src/utils/config.py
-
+		repository_path="$(pwd)"
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			sed -i '' "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/utils/config.py"
+		else
+			sed -i "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/utils/config.py"
+		fi
 
 ## 2. Make necessary modifications to installed torch_geometric package
 
 	- Run the following from the command line: 
+		repository_path="$(pwd)"
 		torch_geometric_location=$(pip show torch-geometric | grep Location | awk '{print $2}' | sed 's|$|/torch_geometric|')
-		setup_path = $(echo $(pwd)/setup/modified_torch_geometric_files)
-		sed -i "s|dir_to_modify = .*|dir_to_modify = '$torch_geometric_location'|" $(pwd)/setup/modify_torch_geometric_script.py
-		sed -i "s|modified_files_dir = .*|modified_files_dir = '$setup_path'|" $(pwd)/setup/modify_torch_geometric_script.py
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			sed -i '' "s|dir_to_modify = .*|dir_to_modify = '$torch_geometric_location'|" $repository_path/setup/modify_torch_geometric_script.py
+		else
+			sed -i "s|dir_to_modify = .*|dir_to_modify = '$torch_geometric_location'|" $repository_path/setup/modify_torch_geometric_script.py
+		fi
+		setup_path=$(echo $(pwd)/setup/modified_torch_geometric_files)
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			sed -i '' "s|modified_files_dir = .*|modified_files_dir = '$setup_path'|" $repository_path/setup/modify_torch_geometric_script.py
+		else
+			sed -i "s|modified_files_dir = .*|modified_files_dir = '$setup_path'|" $repository_path/setup/modify_torch_geometric_script.py
+		fi
 		python setup/modify_torch_geometric_script.py
 	
 
@@ -50,6 +62,6 @@ Accompanies our paper, "Identifying Backdoor Training Samples in Graph Data: A G
 
 ## Examples:
 
-	python run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type random --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
-	python run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type adaptive --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4
-	python run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type clean_label --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
+	python src/run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type random --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
+	python src/run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type adaptive --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4
+	python src/run.py --run_attack --run_explain --attack_target_label 1 --backdoor_type clean_label --dataset MUTAG --poison_rate 0.2 --model_hyp_set B --seed 2575 --trigger_size 4 --graph_type SW
