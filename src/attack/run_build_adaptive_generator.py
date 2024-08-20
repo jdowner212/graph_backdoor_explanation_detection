@@ -3,19 +3,15 @@ import argparse
 import os
 import sys
 
-current_dir = os.path.dirname(os.path.dirname(__file__))
+current_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 root_dir = os.path.dirname(current_dir)
-print('RUN BUILD ADAPTIVE curren_dir:',current_dir)
 sys.path.append(current_dir)
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
 sys.path.append(os.path.join(current_dir,'explain'))
 sys.path.append(os.path.join(current_dir,'detection'))
 
-
-# os.chdir(os.path.join(current_dir,'utils'))
 from   attack.backdoor_utils import *
-# os.chdir(current_dir)
 import pickle
 import random
 import torch
@@ -23,27 +19,22 @@ import torch_geometric
 from   torch_geometric.transforms import Compose, OneHotDegree
 
 data_shape_dict   = get_info('data_shape_dict')
-src_dir     = get_info('src_dir')
 data_dir    = get_info('data_dir')
 adapt_gen_dir = get_info('adapt_gen_dir')
-adapt_benign_models = get_info('adapt_benign_models')
-# generator_hyperparam_dicts_v1 = get_info('generator_hyperparam_dicts_v1')
-# generator_hyperparam_dicts_v2 = get_info('generator_hyperparam_dicts_v2')
+adapt_surrogate_models = get_info('adapt_surrogate_models')
 generator_hyperparam_dicts = get_info('generator_hyperparam_dicts')
 surrogate_hyperparams_initial = get_info('surrogate_hyperparams_initial')
 surrogate_hyperparams_looping = get_info('surrogate_hyperparams_looping')
 
-# device=torch.device('cpu')
 
 def parse_args():
     parser=argparse.ArgumentParser(description="Adaptive generator training: input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
-    parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
+    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--poison_rate',                type=float,             default=0.2,            help='Poison rate, expressed as a portion of training data size.')
-    # parser.add_argument('--gen_alg_v',                  type=int,               default=3,              help='Hyperparameter set to use for training adaptive trigger generator.')
     parser.add_argument('--gen_rounds',                 type=int,               default=3,              help='Number of iterations to train adaptive trigger generator.')
-    parser.add_argument('--load_or_train_benign_model', type=str,               default='train',        help='Valid values: "load","train"')
+    parser.add_argument('--load_or_train_surrogate_GNN',type=str,               default='train',        help='Valid values: "load","train"')
     parser.add_argument('--seed',                       type=int,               default=2575,           help='Makes randomness constant.')
     parser.add_argument('--trigger_size',               type=int,               default=6,              help='Subgraph trigger size.')
 
@@ -58,7 +49,7 @@ def main():
     trigger_size           = args.trigger_size
     num_classes            = data_shape_dict[dataset]['num_classes']
     num_node_features      = data_shape_dict[dataset]['num_node_features']
-    assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
+    # assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
 
 
     ''''''''''''''''''''''''''''''
@@ -93,30 +84,29 @@ def main():
     '''  Load/Train Surrogate Model  '''
     ''''''''''''''''''''''''''''''''''''
     surrogate_kwargs_looping = surrogate_hyperparams_looping[dataset_name]
-    benign_model_name   = f'GNN_{dataset_name}'
-    benign_filename     = os.path.join(adapt_benign_models, dataset_name, f"GraphLevel_{benign_model_name}.ckpt")
-    if args.load_or_train_benign_model == 'load' and os.path.isfile(benign_filename):
-        print("Found pretrained benign/surrogate GNN, loading...")
+    surrogate_model_name   = f'GNN_{dataset_name}'
+    surrogate_filename     = os.path.join(adapt_surrogate_models, dataset_name, f"GraphLevel_{surrogate_model_name}.ckpt")
+    if args.load_or_train_surrogate_GNN == 'load' and os.path.isfile(surrogate_filename):
+        print("Found pretrained surrogate GNN, loading...")
         num_node_features = max_degree
         num_classes = len(set(data_labels))
-        benign_model = GraphLevelGNN_opt(c_in=num_node_features, c_out=num_classes, **surrogate_hyperparams_initial[dataset_name])
-        benign_model.load_state_dict(torch.load(benign_filename))
+        surrogate_model = GraphLevelGNN_opt(c_in=num_node_features, c_out=num_classes, **surrogate_hyperparams_initial[dataset_name])
+        surrogate_model.load_state_dict(torch.load(surrogate_filename))
     else:
-        print("Training benign/surrogate GNN...")
-        retrain_benign = True if args.load_or_train_benign_model == 'train' else False
-        benign_model = train_benign(dataset_name, train_dataset, test_dataset, benign_filename, retrain=retrain_benign, save=True, seed=args.seed, **surrogate_kwargs_looping)
+        print("Training surrogate GNN...")
+        retrain_surrogate = True if args.load_or_train_surrogate_GNN == 'train' else False
+        surrogate_model = train_surrogate(dataset_name, train_dataset, test_dataset, surrogate_filename, retrain=retrain_surrogate, save=True, seed=args.seed, **surrogate_kwargs_looping)
 
     ''''''''''''''''''''''''''''''
     '''  Load/Train Generator  '''
     ''''''''''''''''''''''''''''''
     generator_name_dict = {'regular': EdgeGenerator, 'heavy': EdgeGeneratorHeavy}
-    # generator_hyperparam_dicts= generator_hyperparam_dicts
     generator_class_name, epochs, T, lr_Ma, lr_gen, weight_decay, hidden_dim, depth, dropout_prob, batch_size, max_num_edges = unpack_kwargs(generator_hyperparam_dicts[dataset][attack_target_label], ['generator_class', 'epochs', 'T', 'lr_Ma', 'lr_gen', 'weight_decay', 'hidden_dim', 'depth', 'dropout_prob', 'batch_size', 'max_num_edges'])
     generator_class = generator_name_dict[generator_class_name]
     print('Training generator...')
-    generator_kwargs = {'generator_class':generator_class,'T':T,'lr_Ma':lr_Ma, 'lr_gen':lr_gen, 'weight_decay':weight_decay,'hidden_dim':hidden_dim,'depth':depth,'dropout_prob':dropout_prob,'batch_size':batch_size,'max_num_edges':max_num_edges, 'epochs':epochs, 'contin_or_scratch': args.contin_or_scratch}
-    generator_path   = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}_{args.contin_or_scratch}")
-    _= train_generator_iterative_loop(benign_model, 
+    generator_kwargs = {'generator_class':generator_class,'T':T,'lr_Ma':lr_Ma, 'lr_gen':lr_gen, 'weight_decay':weight_decay,'hidden_dim':hidden_dim,'depth':depth,'dropout_prob':dropout_prob,'batch_size':batch_size,'max_num_edges':max_num_edges, 'epochs':epochs}#, 'contin_or_scratch': args.contin_or_scratch}
+    generator_path   = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}")#_{args.contin_or_scratch}")
+    _= train_generator_iterative_loop(surrogate_model, 
                                       dataset_name,
                                       train_dataset,
                                       test_dataset,

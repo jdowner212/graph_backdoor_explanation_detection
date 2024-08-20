@@ -3,9 +3,8 @@ import argparse
 import os
 import sys
 
-current_dir = os.path.abspath(os.path.dirname(__file__))
+current_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 root_dir = os.path.dirname(current_dir)
-print('RUN ATTACK curren_dir:',current_dir)
 sys.path.append(current_dir)
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
@@ -18,34 +17,23 @@ import random
 import torch
 import torch_geometric
 from   torch_geometric.transforms import Compose, OneHotDegree
-# device=torch.device('cpu')
 
 hyp_dict_backdoor = get_info('hyp_dict_backdoor')
 hyp_dict_backdoor_adaptive= get_info('hyp_dict_backdoor_adaptive')
-hyp_dict_clean    = get_info('hyp_dict_clean')
 data_shape_dict   = get_info('data_shape_dict')
-src_dir     = get_info('src_dir')
 data_dir    = get_info('data_dir')
-train_dir   = get_info('train_dir')
-train_dir_clean = get_info('train_dir_cln')
 adapt_gen_dir = get_info('adapt_gen_dir')
-adapt_benign_models = get_info('adapt_benign_models')
-# generator_hyperparam_dicts_v1 = get_info('generator_hyperparam_dicts_v1')
-# generator_hyperparam_dicts_v2 = get_info('generator_hyperparam_dicts_v2')
 generator_hyperparam_dicts = get_info('generator_hyperparam_dicts')
-surrogate_hyperparams_initial = get_info('surrogate_hyperparams_initial')
-surrogate_hyperparams_looping = get_info('surrogate_hyperparams_looping')
 
 
 def parse_args():
     parser=argparse.ArgumentParser(description="Attack input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
     parser.add_argument('--backdoor_type',              type=str,               default='random',       help='Valid values: "random","adaptive","clean_label"')
-    parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
+    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--ER_graph_P',                 type=float,             default=1,              help='Probability of an edge between any two nodes in Erdos-Renyi graph generation.')
     parser.add_argument('--poison_rate',                type=float,             default=0.2,            help='Poison rate, expressed as a portion of training data size.')
-    # parser.add_argument('--gen_alg_v',                  type=int,               default=3,              help='Hyperparameter set to use for training adaptive trigger generator.')
     parser.add_argument('--graph_type',                 type=str,               default='ER',           help='Random graph synthesis method for producing the trigger.')
     parser.add_argument('--model_hyp_set',              type=str,               default='A',            help='Your choice of pre-defined hyperparameter sets, as defined in /repo/src/config.py.')
     parser.add_argument('--PA_graph_K',                 type=int,               default=0,              help='Number of neighbors in initial ring lattice for Small-World graph generation. If 0, will automatically compute default value as a function of trigger size.')
@@ -75,7 +63,7 @@ def main():
     these_classifier_hyperparams = this_hyp_dict[dataset][attack_target_label][model_hyp_set]
     num_classes            = data_shape_dict[dataset]['num_classes']
     num_node_features      = data_shape_dict[dataset]['num_node_features']
-    assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
+    # assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
     
 
     these_attack_specs = build_attack_specs()
@@ -127,7 +115,7 @@ def main():
         '''       Attack GNN       '''
         ''''''''''''''''''''''''''''''
         model_path = get_model_path(dataset, these_classifier_hyperparams, these_attack_specs, these_model_specs['model_hyp_set'])
-        class_weights   = get_class_weights(dataset_dict_backdoor, attack_target_label, 'backdoor', num_classes) if these_classifier_hyperparams['balanced']==True else None
+        class_weights   = get_class_weights(dataset_dict_backdoor, 'backdoor', num_classes) if these_classifier_hyperparams['balanced']==True else None
         dataloader_dict = get_dataloader_dict(dataset_dict_backdoor, dataset_dict_clean, these_model_specs, these_classifier_hyperparams)
         _, _ = train_loop_backdoor(dataset,            dataloader_dict,                class_weights,  model_path,     these_attack_specs, 
                                 these_model_specs,  these_classifier_hyperparams,   args.plot,           verbose=True)
@@ -166,11 +154,7 @@ def main():
         '''     Load Generator     '''
         ''''''''''''''''''''''''''''''
         generator_name_dict = {'regular': EdgeGenerator, 'heavy': EdgeGeneratorHeavy}
-        # generator_hyperparam_dicts= generator_hyperparam_dicts_iterative_exp if args.gen_alg_v==3 else None
-        #if args.gen_alg_v!=3:
-        #generator_checkpoint_path = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}.ckpt")
-        #else:
-        generator_checkpoint_path = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}_{args.contin_or_scratch}_final.ckpt")
+        generator_checkpoint_path = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}_final.ckpt")
         generator_class_name, hidden_dim, depth, dropout_prob = unpack_kwargs(generator_hyperparam_dicts[dataset][attack_target_label], ['generator_class', 'hidden_dim', 'depth', 'dropout_prob'])
         generator_class = generator_name_dict[generator_class_name]
         try:
@@ -189,7 +173,7 @@ def main():
         ''''''''''''''''''''''''''''''
         if args.regenerate_data==True:
             print('regenerate data')
-            dataset_dict_adaptive = build_dataset_dict_adaptive(trigger_generator, dataset_dict_clean, train_backdoor_indices, test_backdoor_indices, trigger_size, attack_target_label)
+            dataset_dict_adaptive = poison_data_adaptive_attack(trigger_generator, dataset_dict_clean, train_backdoor_indices, test_backdoor_indices, trigger_size, attack_target_label)
             clean_labels = []
             for i, g in enumerate(dataset_dict_adaptive['train_backdoor_graphs']):
                 g = dataset_dict_adaptive['train_backdoor_graphs'][i]
@@ -200,7 +184,7 @@ def main():
                 print("Largest trigger size is too big for dataset -- try limiting to attacks with smaller triggers.")
                 # break
             else:
-                gen_dataset_folder_ext = f'_{args.contin_or_scratch}'
+                gen_dataset_folder_ext = ''#f'_{args.contin_or_scratch}'
                 dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False, gen_dataset_folder_ext=gen_dataset_folder_ext)
                 create_nested_folder(dataset_path)
                 with open(dataset_path,'wb') as f:
@@ -215,7 +199,7 @@ def main():
         '''        Attack GNN      '''
         ''''''''''''''''''''''''''''''
         model_path      = get_model_path(dataset, these_classifier_hyperparams, these_attack_specs, these_model_specs['model_hyp_set'])
-        class_weights   = get_class_weights(dataset_dict_adaptive, attack_target_label, 'backdoor', num_classes) if these_classifier_hyperparams['balanced']==True else None
+        class_weights   = get_class_weights(dataset_dict_adaptive, 'backdoor', num_classes) if these_classifier_hyperparams['balanced']==True else None
         dataloader_dict = get_dataloader_dict(dataset_dict_adaptive, dataset_dict_clean, these_model_specs, these_classifier_hyperparams)
         
         _, _ = train_loop_backdoor(dataset,             dataloader_dict,                class_weights,   model_path,     these_attack_specs, 

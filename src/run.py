@@ -1,14 +1,11 @@
 import os
 import sys
-# Get the absolute path to the root_dir
 current_dir = os.path.abspath(os.path.dirname(__file__))
-print('RUN current_dir:',current_dir)
 root_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
 sys.path.append(os.path.join(current_dir,'explain'))
 sys.path.append(os.path.join(current_dir,'detection'))
-
 
 from   utils.config import *
 from   utils.data_utils import *
@@ -18,37 +15,14 @@ from   explain.explainer_utils import *
 from   detection.explainer_detection_metrics import *
 import argparse
 import subprocess
-# import torch
-# device=torch.device('mps')
 
-
-
-''' DO NOT CHANGE'''
-hyp_dict_backdoor = get_info('hyp_dict_backdoor')
-hyp_dict_backdoor_adaptive= get_info('hyp_dict_backdoor_adaptive')
-hyp_dict_clean    = get_info('hyp_dict_clean')
-data_shape_dict   = get_info('data_shape_dict')
-src_dir     = get_info('src_dir')
-print('src_dir:',src_dir)
-data_dir    = get_info('data_dir')
-explain_dir = get_info('explain_dir')
-train_dir   = get_info('train_dir')
-train_dir_clean = get_info('train_dir_cln')
-adapt_gen_dir = get_info('adapt_gen_dir')
-adapt_benign_models = get_info('adapt_benign_models')
-generator_hyperparam_dicts_v1 = get_info('generator_hyperparam_dicts_v1')
-generator_hyperparam_dicts_v2 = get_info('generator_hyperparam_dicts_v2')
-generator_hyperparam_dicts_iterative_exp = get_info('generator_hyperparam_dicts_iterative_exp')
-surrogate_hyperparams_initial = get_info('surrogate_hyperparams_initial')
-surrogate_hyperparams_looping = get_info('surrogate_hyperparams_looping')
-
+src_dir  = get_info('src_dir')
 
 
 ''' CAN CUSTOMIZE / EXPERIMENT WITH THESE VALUES '''
 def parse_args():
     parser=argparse.ArgumentParser(description="Input arguments")
     # General
-    # parser.add_argument('--device',                     type=str,               default='cpu',          help='cpu, gpu, mps, etc.')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--plot',                       action='store_true',                            help='Include to save plots of results.')
     parser.add_argument('--regenerate_data',            action='store_true',                            help='Include to regenerate any previously-generated data.')
@@ -68,10 +42,9 @@ def parse_args():
     parser.add_argument('--trigger_size',               type=int,               default=6,              help='Subgraph trigger size.')
 
     # Adaptive generator training
-    parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
-    # parser.add_argument('--gen_alg_v',                  type=int,               default=3,              help='Hyperparameter set to use for training adaptive trigger generator.')
+    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--gen_rounds',                 type=int,               default=3,              help='Number of iterations to train adaptive trigger generator.')
-    parser.add_argument('--load_or_train_benign_model', type=str,               default='train',        help='Valid values: "load","train"')
+    parser.add_argument('--load_or_train_surrogate_GNN',type=str,               default='train',        help='Valid values: "load","train"')
     parser.add_argument('--load_or_train_generator',    type=str,               default='train',        help='Valid values: "load","train"')
 
     # GNNExplainer
@@ -121,10 +94,9 @@ def main():
     trigger_size = str(args.trigger_size)
 
     # Adaptive generator training
-    contin_or_scratch = str(args.contin_or_scratch)
-    # gen_alg_v = str(args.gen_alg_v)
+    # contin_or_scratch = str(args.contin_or_scratch)
     gen_rounds = str(args.gen_rounds)
-    load_or_train_benign_model = str(args.load_or_train_benign_model)
+    load_or_train_surrogate_GNN = str(args.load_or_train_surrogate_GNN)
 
     # GNNExplainer
     edge_reduction = str(args.edge_reduction)
@@ -149,18 +121,18 @@ def main():
             if args.load_or_train_generator == 'train':
                 assert os.path.exists(f'{src_dir}/attack/run_build_adaptive_generator.py')
                 arguments = ['python',f'{src_dir}/attack/run_build_adaptive_generator.py']
-                arguments += ['--attack_target_label',attack_target_label,'--contin_or_scratch',contin_or_scratch, '--dataset',dataset, '--poison_rate',poison_rate,
-                            '--gen_rounds',gen_rounds, '--load_or_train_benign_model',load_or_train_benign_model, '--seed',seed, 
-                            '--trigger_size',trigger_size]#, '--device',device]
+                arguments += ['--attack_target_label',attack_target_label,#'--contin_or_scratch',contin_or_scratch, 
+                              '--dataset',dataset, '--poison_rate',poison_rate,
+                            '--gen_rounds',gen_rounds, '--load_or_train_surrogate_GNN',load_or_train_surrogate_GNN, '--seed',seed, 
+                            '--trigger_size',trigger_size]
                 subprocess.run(arguments)
         
         assert os.path.exists(f'{src_dir}/attack/run_attack.py')
         arguments = ['python',f'{src_dir}/attack/run_attack.py']
-        arguments += ['--attack_target_label',attack_target_label, '--backdoor_type',backdoor_type, '--contin_or_scratch',contin_or_scratch, '--dataset',dataset,
-                      '--ER_graph_P', ER_graph_P, '--poison_rate',poison_rate,# '--gen_alg_v', gen_alg_v, #'--gen_rounds', gen_rounds, 
-                      '--graph_type',graph_type,
-                      '--model_hyp_set',model_hyp_set, '--PA_graph_K',PA_graph_K,  '--SW_graph_K',SW_graph_K, '--SW_graph_P',SW_graph_P,
-                      '--seed',seed, '--trigger_size',trigger_size]#, '--device',device]
+        arguments += ['--attack_target_label',attack_target_label, '--backdoor_type',backdoor_type, #'--contin_or_scratch',contin_or_scratch, 
+                      '--dataset',dataset,
+                      '--ER_graph_P', ER_graph_P, '--poison_rate',poison_rate, '--graph_type',graph_type, '--model_hyp_set',model_hyp_set, '--PA_graph_K',PA_graph_K,  
+                      '--SW_graph_K',SW_graph_K, '--SW_graph_P',SW_graph_P, '--seed',seed, '--trigger_size',trigger_size]
         if plot==True:
             arguments += ['--plot']
         if regenerate_data==True:
@@ -172,14 +144,14 @@ def main():
     if run_explain==True:
         assert os.path.exists(f'{src_dir}/detection/run_explain_and_detect.py')
         arguments = ['python',f'{src_dir}/detection/run_explain_and_detect.py']
-        arguments += ['--attack_target_label',attack_target_label, '--backdoor_type',backdoor_type, '--contin_or_scratch',contin_or_scratch, '--dataset',dataset,
+        arguments += ['--attack_target_label',attack_target_label, '--backdoor_type',backdoor_type, #'--contin_or_scratch',contin_or_scratch, 
+                      '--dataset',dataset,
                       '--edge_reduction',edge_reduction, '--edge_size',edge_size, '--edge_ent',edge_ent, '--ER_graph_P',ER_graph_P, '--explain_lr',explain_lr, 
-                      '--explainer_epochs',explainer_epochs, '--explanation_type',explanation_type, '--poison_rate',poison_rate, #'--gen_alg_v',gen_alg_v, 
-                      '--gen_rounds',gen_rounds, '--graph_type',graph_type, '--model_hyp_set',model_hyp_set, '--node_feat_ent',node_feat_ent, 
-                      '--node_feat_reduction', node_feat_reduction, '--node_feat_size',node_feat_size, '--PA_graph_K',PA_graph_K,
-                      '--SW_graph_K',SW_graph_K, '--SW_graph_P',SW_graph_P, '--seed',seed, '--thresh_type',thresh_type, 
-                      '--thresh_val',thresh_val, '--trigger_size',trigger_size, '--lower_thresh_percentile',lower_thresh_percentile, 
-                      '--upper_thresh_percentile',upper_thresh_percentile]#, '--device',device]
+                      '--explainer_epochs',explainer_epochs, '--explanation_type',explanation_type, '--poison_rate',poison_rate, '--gen_rounds',gen_rounds, 
+                      '--graph_type',graph_type, '--model_hyp_set',model_hyp_set, '--node_feat_ent',node_feat_ent, '--node_feat_reduction', node_feat_reduction, 
+                      '--node_feat_size',node_feat_size, '--PA_graph_K',PA_graph_K, '--SW_graph_K',SW_graph_K, '--SW_graph_P',SW_graph_P, '--seed',seed, 
+                      '--thresh_type',thresh_type, '--thresh_val',thresh_val, '--trigger_size',trigger_size, '--lower_thresh_percentile',lower_thresh_percentile, 
+                      '--upper_thresh_percentile',upper_thresh_percentile]
         if plot==True:
             arguments += ['--plot']
         if regenerate_data==True:

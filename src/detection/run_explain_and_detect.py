@@ -3,10 +3,8 @@ import argparse
 import os
 import sys
 
-current_dir = os.path.abspath(os.path.dirname(__file__))
+current_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 root_dir = os.path.dirname(current_dir)
-print('RUN EXLPAIN curren_dir:',current_dir)
-
 sys.path.append(current_dir)
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
@@ -22,37 +20,20 @@ from   detection.explainer_detection_metrics import *
 import numpy as np
 import pickle
 import random
-import torch
-import pandas as pd
 import copy
-
-
 
 
 hyp_dict_backdoor = get_info('hyp_dict_backdoor')
 hyp_dict_backdoor_adaptive = get_info('hyp_dict_backdoor_adaptive')
-hyp_dict_clean    = get_info('hyp_dict_clean')
 data_shape_dict   = get_info('data_shape_dict')
-src_dir     = get_info('src_dir')
-data_dir    = get_info('data_dir')
 explain_dir = get_info('explain_dir')
-train_dir   = get_info('train_dir')
-train_dir_clean = get_info('train_dir_cln')
-adapt_gen_dir = get_info('adapt_gen_dir')
-adapt_benign_models = get_info('adapt_benign_models')
-# generator_hyperparam_dicts_v1 = get_info('generator_hyperparam_dicts_v1')
-# generator_hyperparam_dicts_v2 = get_info('generator_hyperparam_dicts_v2')
-# generator_hyperparam_dicts = get_info('generator_hyperparam_dicts')
-# surrogate_hyperparams_initial = get_info('surrogate_hyperparams_initial')
-# surrogate_hyperparams_looping = get_info('surrogate_hyperparams_looping')
-
 
 
 def parse_args():
     parser=argparse.ArgumentParser(description="GNNExplainer and backdoor detection: input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
     parser.add_argument('--backdoor_type',              type=str,               default='random',       help='Valid values: "random","adaptive","clean_label"')
-    parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
+    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--edge_reduction',             type=str,               default='sum',          help='Method for aggregating edges for computations by GNNExplainer.')
     parser.add_argument('--edge_size',                  type=float,             default=0.0001,         help='Coefficient on "edge size" term in GNNExplainer loss; larger value will reduce number of edges preserved by explanatory subgraph.')
@@ -62,7 +43,6 @@ def parse_args():
     parser.add_argument('--explainer_epochs',           type=int,               default=50,             help='The number of epochs over which GNNExplainer trains.')
     parser.add_argument('--explanation_type',           type=str,               default='phenomenon',   help='The style of explanation used by GNNExplainer. "Phenomenon" explains with respect to a target label; "Model" explains with respect to GNN output.')
     parser.add_argument('--poison_rate',                type=float,             default=0.2,            help='Poison rate, expressed as a portion of training data size.')
-    # parser.add_argument('--gen_alg_v',                  type=int,               default=1,              help='Hyperparameter set to use for training adaptive trigger generator.')
     parser.add_argument('--gen_rounds',                 type=int,               default=3,              help='Number of iterations to train adaptive trigger generator.')
     parser.add_argument('--graph_type',                 type=str,               default='ER',           help='Random graph synthesis method for producing the trigger.')
     parser.add_argument('--lower_thresh_percentile',    type=float,             default=0.25,           help='Percentile defining lower threshold for backdoor prediction (must range from 0 to 1)')
@@ -85,7 +65,6 @@ def parse_args():
     return args
 
 
-# device=torch.device('cpu')
 
 def main():
     args=parse_args()
@@ -103,7 +82,7 @@ def main():
     model_type    = these_classifier_hyperparams['model_type']
 
     num_classes            = data_shape_dict[dataset]['num_classes']
-    assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
+    # assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
     
     these_explainer_hyperparams = build_explainer_hyperparams()
     these_explainer_hyperparams['threshold_config']['threshold_type'] = args.thresh_type
@@ -149,7 +128,6 @@ def main():
             prob=1
     these_attack_specs['K']=K
     these_attack_specs['prob']=prob
-
     dataset_dict_clean = retrieve_data_process(args.regenerate_data, True, dataset, {}, seed=args.seed)
     print_attack_description(these_classifier_hyperparams, these_attack_specs, model_hyp_set)
 
@@ -237,8 +215,8 @@ def main():
         '''      Load Dataset      '''
         ''''''''''''''''''''''''''''''
         random.seed(args.seed)
-        gen_dataset_folder_ext = f'_{args.contin_or_scratch}'
-        dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False,gen_dataset_folder_ext=gen_dataset_folder_ext)
+        # gen_dataset_folder_ext = f'_{args.contin_or_scratch}'
+        dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False,gen_dataset_folder_ext='')
         with open(dataset_path,'rb') as f:
             dataset_dict_adaptive = pickle.load(f)
 
