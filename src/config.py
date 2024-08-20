@@ -1,5 +1,5 @@
 ''' SET TO REPOSITORY PATH '''
-root_dir = '/Users/janedowner/Desktop/Desktop/IDEAL/Project_1/graph_backdoor_explanation_detection'
+root_dir = '/path/to/graph_backdoor_explanation_detection'
 
 
 src_dir     = f'{root_dir}/src'
