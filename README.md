@@ -1,5 +1,5 @@
 The code appendix accompanying our paper, "Identifying Backdoor Training Samples in Graph Data: A GNN Explainer Approach with Novel Metrics".
-This file contains two sections: (I) Repository Structure, (II) Description of Relevant Code, and (II) Instructions for use.
+This file contains two sections: (I) Repository Structure, (II) Description of Relevant Code, and (III) Instructions for use.
 
 # I. REPOSITORY STRUCTURE
 
