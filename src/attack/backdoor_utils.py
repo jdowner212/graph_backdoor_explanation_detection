@@ -58,7 +58,6 @@ from   torch_geometric.transforms import Compose, OneHotDegree
 
 
 hyp_dict_backdoor = get_info('hyp_dict_backdoor')
-hyp_dict_clean    = get_info('hyp_dict_clean')
 data_shape_dict   = get_info('data_shape_dict')
 src_dir     = get_info('src_dir')
 data_dir    = get_info('data_dir')
