@@ -7,8 +7,20 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 	├── README.md
 	├── LICENSE
 	├── setup/
+	│   ├── modified_torch_geometric_files/
+	│	│	├── base.py
+	│	│	├── experimental.py
+	│	│	├── explainer.py
+	│	│	├── explanation.py
+	│	│	├── faithfulness.py
+	│	│	├── fidelity.py
+	│	│	├── gnn_explainer.py
+	│	│	├── message_passing.py
+	│	│	├── pg_explainer.py
+	│	│	└── subgraph.py
 	│   ├── modify_torch_geometric_script.py
 	│   └── requirements.txt
+	│
 	└── src/
 		├── config.py
 		├── main.py
@@ -26,7 +38,6 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 			├── general_utils.py
 			├── models.py
 			└── plot_utils.py
-
 
 # II. DESCRIPTION OF RELEVANT CODE
 
