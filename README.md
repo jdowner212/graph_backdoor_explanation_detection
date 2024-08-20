@@ -115,8 +115,9 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 
 	a. Navigate to desired repository location
 	b. Run the following from the command line:
-		conda create --name graph_backdoor_detection python=3.8.16
+		conda create --name graph_backdoor_detection_env python=3.8.16
 		cd graph_backdoor_explanation_detection
+    		conda activate graph_backdoor_detection_env
 		pip install -r setup/requirements.txt
 
 ## 3. Set repository path for code to reference
