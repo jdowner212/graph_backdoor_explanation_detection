@@ -4,8 +4,3 @@ modify_torch_geometric_script.py
 src/detect/dataframe_utils_ignore.py
 src/detect/explain_geometry_ignore.py
 src/detect/explainer_detection_metrics_ignore.py
-training_results
-surrogate_models
-generators_adaptive_trigger
-explainer_results
-data
