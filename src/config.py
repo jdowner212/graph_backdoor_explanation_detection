@@ -221,3 +221,38 @@ metric_plot_info_dict = {'loss_max':                    {'DF': 'Max Loss',      
 def get_info(name):
     g = globals()
     return g.get(name, g.get(name, {}))
+
+
+
+# default_values = {
+#     "attack_target_labels": [0],
+#     "backdoor_type": "random",
+#     "clean_label_attack": False,
+#     "clean_train": False,
+#     "datasets": None,
+#     "edge_reduction": "sum",
+#     "edge_size": 0.0001,
+#     "edge_ent": 1,
+#     "explain": False,
+#     "explain_lr": 0.1,
+#     "explainer_epochs": 50,
+#     "explanation_type": "phenomenon",
+#     "poison_rate": 0.2,
+#     "gen_rounds": 3,
+#     "generator_only": False,
+#     "gens_to_retrain": "[]",
+#     "gens_to_load": "[]",
+#     "graph_types": "[]",
+#     "model_hyp_sets": "AB",
+#     "node_feat_ent": 1.0,
+#     "node_feat_reduction": "sum",
+#     "node_feat_size": 0.0001,
+#     "plot": False,
+#     "re_explain": False,
+#     "regenerate_data": False,
+#     "retrain": False,
+#     "skip_before": -1,
+#     "thresh_type": "hard",
+#     "thresh_val": 0.3,
+#     "trigger_sizes": [2, 4, 6, 8, 10, 12]
+# }
