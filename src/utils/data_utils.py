@@ -1,4 +1,4 @@
-from   utils.config import *
+from   config import *
 import networkx as nx
 import pickle
 import torch

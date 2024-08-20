@@ -1,4 +1,4 @@
-from   utils.config import *
+from   config import *
 from   utils.data_utils import *
 from   utils.general_utils import *
 from   torch.nn import Linear, Sequential, BatchNorm1d, ReLU,  ModuleList, Dropout

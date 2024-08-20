@@ -1,4 +1,4 @@
-from   utils.config import *
+from   config import *
 import numpy as np
 import os
 from   sklearn.model_selection import StratifiedKFold

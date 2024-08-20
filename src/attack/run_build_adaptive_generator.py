@@ -9,7 +9,7 @@ sys.path.append(current_dir)
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
 sys.path.append(os.path.join(current_dir,'explain'))
-sys.path.append(os.path.join(current_dir,'detection'))
+sys.path.append(os.path.join(current_dir,'detect'))
 
 from   attack.backdoor_utils import *
 import pickle
@@ -30,7 +30,6 @@ surrogate_hyperparams_looping = get_info('surrogate_hyperparams_looping')
 def parse_args():
     parser=argparse.ArgumentParser(description="Adaptive generator training: input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
-    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--poison_rate',                type=float,             default=0.2,            help='Poison rate, expressed as a portion of training data size.')
     parser.add_argument('--gen_rounds',                 type=int,               default=3,              help='Number of iterations to train adaptive trigger generator.')

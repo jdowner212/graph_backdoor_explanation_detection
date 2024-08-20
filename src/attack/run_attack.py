@@ -9,7 +9,7 @@ sys.path.append(current_dir)
 sys.path.append(os.path.join(current_dir,'utils'))
 sys.path.append(os.path.join(current_dir,'attack'))
 sys.path.append(os.path.join(current_dir,'explain'))
-sys.path.append(os.path.join(current_dir,'detection'))
+sys.path.append(os.path.join(current_dir,'detect'))
 
 from   backdoor_utils import *
 import pickle
@@ -30,12 +30,11 @@ def parse_args():
     parser=argparse.ArgumentParser(description="Attack input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
     parser.add_argument('--backdoor_type',              type=str,               default='random',       help='Valid values: "random","adaptive","clean_label"')
-    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--ER_graph_P',                 type=float,             default=1,              help='Probability of an edge between any two nodes in Erdos-Renyi graph generation.')
     parser.add_argument('--poison_rate',                type=float,             default=0.2,            help='Poison rate, expressed as a portion of training data size.')
     parser.add_argument('--graph_type',                 type=str,               default='ER',           help='Random graph synthesis method for producing the trigger.')
-    parser.add_argument('--model_hyp_set',              type=str,               default='A',            help='Your choice of pre-defined hyperparameter sets, as defined in /repo/src/config.py.')
+    parser.add_argument('--model_hyp_set',              type=str,               default='A',            help='Your choice of pre-defined hyperparameter sets, as defined in /src/config.py.')
     parser.add_argument('--PA_graph_K',                 type=int,               default=0,              help='Number of neighbors in initial ring lattice for Small-World graph generation. If 0, will automatically compute default value as a function of trigger size.')
     parser.add_argument('--plot',                       action='store_true',                            help='Include to save plots of results.')
     parser.add_argument('--SW_graph_K',                 type=int,               default=0,              help='Number of edges to attach from a new node to existing nodes in Preferential-Attachment graph generation. If 0, will automatically compute default value as a function of trigger size.')
@@ -63,7 +62,6 @@ def main():
     these_classifier_hyperparams = this_hyp_dict[dataset][attack_target_label][model_hyp_set]
     num_classes            = data_shape_dict[dataset]['num_classes']
     num_node_features      = data_shape_dict[dataset]['num_node_features']
-    # assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
     
 
     these_attack_specs = build_attack_specs()
@@ -182,10 +180,8 @@ def main():
                     clean_labels.append(g_clean.pyg_graph.y)#.item())
             if len(set(clean_labels)) == 1:
                 print("Largest trigger size is too big for dataset -- try limiting to attacks with smaller triggers.")
-                # break
             else:
-                gen_dataset_folder_ext = ''#f'_{args.contin_or_scratch}'
-                dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False, gen_dataset_folder_ext=gen_dataset_folder_ext)
+                dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False, gen_dataset_folder_ext='')
                 create_nested_folder(dataset_path)
                 with open(dataset_path,'wb') as f:
                     pickle.dump(dataset_dict_adaptive,f)
