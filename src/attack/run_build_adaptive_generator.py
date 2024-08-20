@@ -27,6 +27,7 @@ surrogate_hyperparams_initial = get_info('surrogate_hyperparams_initial')
 surrogate_hyperparams_looping = get_info('surrogate_hyperparams_looping')
 
 
+
 def parse_args():
     parser=argparse.ArgumentParser(description="Adaptive generator training: input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
@@ -48,8 +49,12 @@ def main():
     trigger_size           = args.trigger_size
     num_classes            = data_shape_dict[dataset]['num_classes']
     num_node_features      = data_shape_dict[dataset]['num_node_features']
-    # assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
 
+    these_attack_specs = build_attack_specs()
+    these_attack_specs['backdoor_type']='adaptive'
+    these_attack_specs['graph_type']=None
+    these_attack_specs['trigger_size']=args.trigger_size
+    these_attack_specs['poison_rate']=args.poison_rate
 
     ''''''''''''''''''''''''''''''
     '''        Load Data       '''
@@ -57,6 +62,7 @@ def main():
     os.makedirs( os.path.join(adapt_gen_dir,dataset), exist_ok=True)
 
     dataset_name = dataset
+    dataset_dict_clean = get_clean_data(dataset, seed=args.seed, verbose=True, clean_pyg_process=True, use_edge_attr=False)
     max_degree_dict = {'MUTAG':5, 'AIDS':7, 'PROTEINS': 26, 'IMDB-BINARY': 136, 'COLLAB': 49, 'REDDIT-BINARY': 3063, 'DBLP': 36}
     max_degree = max_degree_dict[dataset_name]
     if dataset != 'DBLP':
@@ -103,9 +109,9 @@ def main():
     generator_class_name, epochs, T, lr_Ma, lr_gen, weight_decay, hidden_dim, depth, dropout_prob, batch_size, max_num_edges = unpack_kwargs(generator_hyperparam_dicts[dataset][attack_target_label], ['generator_class', 'epochs', 'T', 'lr_Ma', 'lr_gen', 'weight_decay', 'hidden_dim', 'depth', 'dropout_prob', 'batch_size', 'max_num_edges'])
     generator_class = generator_name_dict[generator_class_name]
     print('Training generator...')
-    generator_kwargs = {'generator_class':generator_class,'T':T,'lr_Ma':lr_Ma, 'lr_gen':lr_gen, 'weight_decay':weight_decay,'hidden_dim':hidden_dim,'depth':depth,'dropout_prob':dropout_prob,'batch_size':batch_size,'max_num_edges':max_num_edges, 'epochs':epochs}#, 'contin_or_scratch': args.contin_or_scratch}
-    generator_path   = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}")#_{args.contin_or_scratch}")
-    _= train_generator_iterative_loop(surrogate_model, 
+    generator_kwargs = {'generator_class':generator_class,'T':T,'lr_Ma':lr_Ma, 'lr_gen':lr_gen, 'weight_decay':weight_decay,'hidden_dim':hidden_dim,'depth':depth,'dropout_prob':dropout_prob,'batch_size':batch_size,'max_num_edges':max_num_edges, 'epochs':epochs}
+    generator_path   = os.path.join(adapt_gen_dir, dataset_name, f"Trigger_Generator_{dataset_name}_target_label_{attack_target_label}")
+    trigger_generator = train_generator_iterative_loop(surrogate_model, 
                                       dataset_name,
                                       train_dataset,
                                       test_dataset,
@@ -119,6 +125,25 @@ def main():
                                       surrogate_kwargs_looping,
                                       generator_kwargs)
     
+
+    ''''''''''''''''''''''''''''''''''''''''''
+    '''   Use Generator to Poison Dataset  '''
+    ''''''''''''''''''''''''''''''''''''''''''
+
+    dataset_dict_adaptive = poison_data_adaptive_attack(trigger_generator, dataset_dict_clean, train_backdoor_indices, test_backdoor_indices, trigger_size, attack_target_label)
+    clean_labels = []
+    for i, g in enumerate(dataset_dict_adaptive['train_backdoor_graphs']):
+        g = dataset_dict_adaptive['train_backdoor_graphs'][i]
+        if g.pyg_graph.is_backdoored:
+            g_clean = dataset_dict_clean['train_clean_graphs'][i]
+            clean_labels.append(g_clean.pyg_graph.y)#.item())
+    if len(set(clean_labels)) == 1:
+        print("Largest trigger size is too big for dataset -- try limiting to attacks with smaller triggers.")
+    else:
+        dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False, gen_dataset_folder_ext='')
+        create_nested_folder(dataset_path)
+        with open(dataset_path,'wb') as f:
+                    pickle.dump(dataset_dict_adaptive,f)
 
 if __name__ == '__main__':
     main()

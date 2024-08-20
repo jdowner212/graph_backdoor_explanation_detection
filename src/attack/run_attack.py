@@ -170,7 +170,7 @@ def main():
         '''      Poison Dataset    '''
         ''''''''''''''''''''''''''''''
         if args.regenerate_data==True:
-            print('regenerate data')
+            print('Regenerating data...')
             dataset_dict_adaptive = poison_data_adaptive_attack(trigger_generator, dataset_dict_clean, train_backdoor_indices, test_backdoor_indices, trigger_size, attack_target_label)
             clean_labels = []
             for i, g in enumerate(dataset_dict_adaptive['train_backdoor_graphs']):
@@ -186,7 +186,6 @@ def main():
                 with open(dataset_path,'wb') as f:
                     pickle.dump(dataset_dict_adaptive,f)
         else:
-            print('regenerate data')
             dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False)
             with open(dataset_path,'rb') as f:
                 dataset_dict_adaptive = pickle.load(f)

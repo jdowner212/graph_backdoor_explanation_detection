@@ -101,21 +101,6 @@ def replace_none_nan_with_average(values):
     return np_values
 
 
-# def get_elbow_curvature(losses):
-#     losses = np.asarray(losses) + 1e-15
-#     percent_change = np.abs(100*(losses[0] - losses[-1])/losses[0])
-#     losses_min_max = min_max_scaling(torch.tensor(losses), small_difference=0.0001)
-#     min_max_var = torch.var(losses_min_max).item()
-#     if percent_change < 2 and min_max_var < 0.3:
-#         elbow = 0
-#         curvature = 1
-#     else:
-#         kneedle = KneeLocator(range(len(losses)), losses, S=1, curve="convex", direction="decreasing") # regular convergence
-#         elbow = kneedle.elbow if kneedle.elbow is not None else len(losses)
-#         curvature = kneedle.norm_elbow_y if kneedle.norm_elbow_y is not None else 0
-#     return elbow, curvature
-
-
 def unpack_kwargs(kwargs, keys):
     return [kwargs[k] for k in keys]
 
@@ -139,15 +124,12 @@ def get_model_name(classifier_hyperparams, attack_specs, model_hyp_set):
     if backdoor_type == 'random' or backdoor_type == 'clean_label':
         graph_type = attack_specs['graph_type']
         K_str, prob_str = get_K_str_prob_str(attack_specs)
-        # if backdoor_type=='random':
-            # model_name = f'{model_type}_{graph_type}_attack_target_{int(attack_target_label)}_trigger_size_{trigger_size}_poison_rate_{poison_rate_round}{prob_str}{K_str}_model_hyp_set_{model_hyp_set}_balanced_{balanced}_epochs_{epochs}'
-        # elif backdoor_type=='clean_label':
         model_name = f'{model_type}_{backdoor_type}_{graph_type}_attack_target_{int(attack_target_label)}_trigger_size_{trigger_size}_poison_rate_{poison_rate_round}{prob_str}{K_str}_model_hyp_set_{model_hyp_set}_balanced_{balanced}_epochs_{epochs}'
     elif backdoor_type == 'adaptive':
         model_name = f'{model_type}_{backdoor_type}_target_{int(attack_target_label)}_trigger_size_{trigger_size}_poison_rate_{poison_rate_round}_model_hyp_set_{model_hyp_set}_balanced_{balanced}_epochs_{epochs}'
     return model_name
 
-def print_attack_description(classifier_hyperparams, attack_specs, model_hyp_set):#, clean_label_attack):
+def print_attack_description(classifier_hyperparams, attack_specs, model_hyp_set):
     model_type, balanced, epochs = unpack_kwargs(classifier_hyperparams, ['model_type','balanced','epochs'])
     attack_target_label, trigger_size, poison_rate = unpack_kwargs(attack_specs, ['attack_target_label','trigger_size','poison_rate'])
     K_description = get_K_description(attack_specs)
@@ -164,10 +146,9 @@ def print_attack_description(classifier_hyperparams, attack_specs, model_hyp_set
         attack_description = f'Model Type: {model_type}\nEpochs: {epochs}\nAttack Type: Adaptive\nTrigger Size: {trigger_size}\nPoison Rate: {poison_rate_round}\nAttack Target Label: {int(attack_target_label)}\nClass balance applied: {balanced}\nModel Hyperparameter Set: {model_hyp_set}'
     print(attack_description)
 
+
 def get_model_path(dataset, classifier_hyperparams, attack_specs, model_hyp_set):
     model_name = get_model_name(classifier_hyperparams, attack_specs, model_hyp_set)
-    #if clean_label_attack==True:
-    #    model_name = 'clean_label_attack_' + model_name
     model_path = f'{train_dir}/{dataset}/models/{model_name}.pth'
     if os.path.exists(model_path)==False:
         model_name_parts = model_name.split('_epochs')
@@ -225,35 +206,6 @@ def get_dataset_path(dataset, attack_specs=None, clean=False, gen_dataset_folder
         dataset_subfolder += gen_dataset_folder_ext
         dataset_path = f'{data_dir}/poisoned/{dataset}/{dataset_subfolder}/target_label_{attack_specs["attack_target_label"]}.pth'
     return dataset_path
-
-
-
-# def get_hyperparam_combos(graph_type_attack_KP_dict,graph_type,trigger_size, K_fractions=[0,0.5,1]):
-#     graph_type_attack_KP_dict[graph_type][trigger_size] = []
-#     if graph_type == 'ER':
-#         probs = [1] if trigger_size == 2 else [0.5, 1]
-#         for prob in probs:
-#             graph_type_attack_KP_dict[graph_type][trigger_size].append([None, prob])
-#     if graph_type == 'SW':
-#         K_list = sorted(list(set([k for k in [2, trigger_size - 1] if k > 1 and k <= trigger_size])))
-#         for K in K_list:
-#             for prob in [0.01, 1]:
-#                 graph_type_attack_KP_dict[graph_type][trigger_size].append([K, prob])
-#     if graph_type == 'PA':
-#         K_list = sorted(
-#             list(set([k for k in set([1, int(0.5 * trigger_size), trigger_size - 1]) if k > 0 and k < trigger_size])))
-#         K_list = []
-#         for fraction in K_fractions:
-#             if fraction==0:
-#                 K_list.append(1)
-#             elif fraction==1:
-#                 K_list.append(trigger_size-1)
-#             else:
-#                 K_list.append(int(fraction*trigger_size))
-#         K_list = sorted(list(set(K_list)))
-#         for K in K_list:
-#             graph_type_attack_KP_dict[graph_type][trigger_size].append([K, None])
-#     return graph_type_attack_KP_dict
 
 
 def validate_K(graph_type, K, trigger_size):
