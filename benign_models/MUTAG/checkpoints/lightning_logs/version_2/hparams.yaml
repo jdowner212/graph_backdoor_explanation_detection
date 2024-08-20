@@ -1,9 +1,0 @@
-batch_size: 64
-c_hidden: 128
-c_in: 5
-c_out: 2
-dp_rate_linear: 0.5
-lr: 0.01
-max_epochs: 200
-num_layers: 2
-weight_decay: 0

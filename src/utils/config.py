@@ -1,5 +1,5 @@
 ''' SET TO REPOSITORY PATH '''
-root_dir = '/Users/janedowner/Desktop/Desktop/IDEAL/Project_1/graph_backdoor_explanation_detection'
+root_dir = 'path/to/repository'
 
 
 src_dir     = f'{root_dir}/src'
@@ -273,7 +273,7 @@ default_values = {
     "backdoor_type": "random",
     "clean_label_attack": False,
     "clean_train": False,
-    "contin_or_scratch": "continuous",
+    # "contin_or_scratch": "continuous",
     "datasets": None,
     "edge_reduction": "sum",
     "edge_size": 0.0001,
@@ -283,7 +283,7 @@ default_values = {
     "explainer_epochs": 50,
     "explanation_type": "phenomenon",
     "poison_rate": 0.2,
-    "gen_alg_v": 1,
+    # "gen_alg_v": 1,
     "gen_rounds": 3,
     "generator_only": False,
     "gens_to_retrain": "[]",
@@ -297,7 +297,7 @@ default_values = {
     "re_explain": False,
     "regenerate_data": False,
     "retrain": False,
-    "retrain_benign": False,
+    # "retrain_surrogate": False,
     "skip_before": -1,
     "thresh_type": "hard",
     "thresh_val": 0.3,
