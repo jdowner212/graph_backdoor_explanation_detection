@@ -51,7 +51,7 @@ def main():
     num_node_features      = data_shape_dict[dataset]['num_node_features']
 
     these_attack_specs = build_attack_specs()
-    these_attack_specs['attack_target_label']='attack_target_label'
+    these_attack_specs['attack_target_label']=args.attack_target_label
     these_attack_specs['backdoor_type']='adaptive'
     these_attack_specs['graph_type']=None
     these_attack_specs['trigger_size']=args.trigger_size
