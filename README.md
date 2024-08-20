@@ -27,8 +27,6 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 			├── models.py
 			└── plot_utils.py
 
-Empty folders will be populated running by experiments below.
-
 
 # II. DESCRIPTION OF RELEVANT CODE
 
