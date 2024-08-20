@@ -120,7 +120,7 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 		cd graph_backdoor_explanation_detection
 		pip install -r setup/requirements.txt
 
-## 3. Set repository path for code to reference
+## 2. Set repository path for code to reference
 
 	- Run the following from the command line:
 		repository_path="$(pwd)"
@@ -130,7 +130,7 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 			sed -i "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/config.py"
 		fi
 
-## 2. Make necessary modifications to installed torch_geometric package
+## 3. Make necessary modifications to installed torch_geometric package
 
 	- Run the following from the command line: 
 		repository_path="$(pwd)"
