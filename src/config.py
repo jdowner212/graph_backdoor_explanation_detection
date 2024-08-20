@@ -163,37 +163,19 @@ hyp_dict_backdoor_adaptive = \
     }
 
 
-hyp_dict_clean = {'MUTAG': 
-                    {
-                        'A': dict(model_type='graphgnn',epochs=400,  dropout=0,    lr=0.000001,   weight_decay=5e-4,  batchsize=20,  hidden_channels=32,  num_conv_layers=3,  num_layers=3, batchnorm=[False,False,True,False],balanced=True),
-                        'B': dict(model_type='gcn_plain',epochs=300,  dropout=0,    lr=0.0005,   weight_decay=0.001,  batchsize=200,  hidden_channels=256,  num_conv_layers=2,  num_layers=2, batchnorm=[False,False,False,False],balanced=True)
-                        },
-                'AIDS': 
-                    {
-                        'A': dict(model_type='gin',epochs=100,  dropout=0.1,    lr=1e-4,    weight_decay=1e-5,  batchsize=247,  hidden_channels=16,  num_conv_layers=None,  batchnorm=None, balanced=True)
-                        },
-                'PROTEINS': 
-                    {
-                        'A': dict(model_type='gcn',epochs=200,  dropout=0,      lr=0.0008,    weight_decay=0.08,  batchsize=int(650/1),  hidden_channels=128,  num_conv_layers=3,  batchnorm=[False,False,False], balanced=True)
-                        },
-                'BZR': 
-                    {
-                        'A': dict(model_type='gin',epochs=200,  dropout=0.1,    lr=0.0001,     weight_decay=0.25,  batchsize=184,  hidden_channels=64,    num_conv_layers=2,  batchnorm=[False,False],balanced=True)
-                        }
-                }
 
 
-surrogate_hyperparams_initial = {'MUTAG': {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
-                        'AIDS': {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
-                        'PROTEINS': {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
-                        'IMDB-BINARY': {'c_hidden': 128, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':3, 'batch_size':256,'dp_rate_linear':0.8,'max_epochs':400},                                
-                        'DBLP': {'c_hidden': 512, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.8,'max_epochs':200}}
+surrogate_hyperparams_initial = {'MUTAG':       {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
+                                'AIDS':         {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
+                                'PROTEINS':     {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
+                                'IMDB-BINARY':  {'c_hidden': 128, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':3, 'batch_size':256,'dp_rate_linear':0.8,'max_epochs':400},                                
+                                'DBLP':         {'c_hidden': 512, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.8,'max_epochs':200}}
 
-surrogate_hyperparams_looping = { 'MUTAG':         {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
-                            'AIDS':          {'c_hidden': 96, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':128,'dp_rate_linear':0.5,'max_epochs':100},
-                            'PROTEINS':      {'c_hidden': 96, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':100},
-                            'IMDB-BINARY':   {'c_hidden': 128, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':3, 'batch_size':256,'dp_rate_linear':0.8,'max_epochs':100},                                    
-                            'DBLP':          {'c_hidden': 512, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.8,'max_epochs':50}}
+surrogate_hyperparams_looping = { 'MUTAG':      {'c_hidden': 128, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':200},
+                                  'AIDS':       {'c_hidden': 96, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':128,'dp_rate_linear':0.5,'max_epochs':100},
+                                  'PROTEINS':   {'c_hidden': 96, 'lr': 1e-2, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.5,'max_epochs':100},
+                                  'IMDB-BINARY':{'c_hidden': 128, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':3, 'batch_size':256,'dp_rate_linear':0.8,'max_epochs':100},                                    
+                                  'DBLP':       {'c_hidden': 512, 'lr': 1e-4, 'weight_decay': 0, 'num_layers':2, 'batch_size':64,'dp_rate_linear':0.8,'max_epochs':50}}
 
 
 
@@ -239,38 +221,3 @@ metric_plot_info_dict = {'loss_max':                    {'DF': 'Max Loss',      
 def get_info(name):
     g = globals()
     return g.get(name, g.get(name, {}))
-
-
-
-# default_values = {
-#     "attack_target_labels": [0],
-#     "backdoor_type": "random",
-#     "clean_label_attack": False,
-#     "clean_train": False,
-#     "datasets": None,
-#     "edge_reduction": "sum",
-#     "edge_size": 0.0001,
-#     "edge_ent": 1,
-#     "explain": False,
-#     "explain_lr": 0.1,
-#     "explainer_epochs": 50,
-#     "explanation_type": "phenomenon",
-#     "poison_rate": 0.2,
-#     "gen_rounds": 3,
-#     "generator_only": False,
-#     "gens_to_retrain": "[]",
-#     "gens_to_load": "[]",
-#     "graph_types": "[]",
-#     "model_hyp_sets": "AB",
-#     "node_feat_ent": 1.0,
-#     "node_feat_reduction": "sum",
-#     "node_feat_size": 0.0001,
-#     "plot": False,
-#     "re_explain": False,
-#     "regenerate_data": False,
-#     "retrain": False,
-#     "skip_before": -1,
-#     "thresh_type": "hard",
-#     "thresh_val": 0.3,
-#     "trigger_sizes": [2, 4, 6, 8, 10, 12]
-# }
