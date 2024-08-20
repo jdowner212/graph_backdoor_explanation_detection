@@ -163,44 +163,6 @@ def update_explanation_dict(d, explainer, explanation):
     d['unfaiths'].append(unfaith)
     return d
 
-# def print_explanation_scores(explanation_dict_backdoor, explanation_dict_clean = None, backdoor_label = 0):
-#     if explanation_dict_clean is not None:
-#         explanation  = explanation_dict_clean['explanation']
-#         explainer    = explanation_dict_clean['explainer']
-#         ground_truth = str(1-backdoor_label) 
-#         prediction        = str(torch.argmax(explainer.get_prediction(explanation.x,explanation.edge_index,)).item())
-#         masked_prediction = str(torch.argmax(explainer.get_masked_prediction(explanation.x,explanation.edge_index,explanation.node_mask,explanation.edge_mask)).item())
-#         clean_pos_fid     = str(explanation_dict_clean['pos_fids'][-1])
-#         clean_neg_fid     = str(explanation_dict_clean['neg_fids'][-1])
-#         clean_unfaith     = str(np.round(explanation_dict_clean['unfaiths'][-1],4))
-#         print('**Clean**')
-#         print('Ground Truth'.ljust(15),'Full Pred'.ljust(10),'Mask Pred'.ljust(10),'Pos Fid'.ljust(10),'Neg Fid'.ljust(10), 'Unfaith'.ljust(10))
-#         print(ground_truth.ljust(15), prediction.ljust(10), masked_prediction.ljust(10), clean_pos_fid.ljust(10), clean_neg_fid.ljust(10), clean_unfaith.ljust(10))
-#     explanation  = explanation_dict_backdoor['explanation']
-#     explainer    = explanation_dict_backdoor['explainer']
-#     ground_truth = str(backdoor_label)
-#     prediction        = str(torch.argmax(explainer.get_prediction(explanation.x,explanation.edge_index,)).item())
-#     masked_prediction = str(torch.argmax(explainer.get_masked_prediction(explanation.x,explanation.edge_index,explanation.node_mask,explanation.edge_mask)).item())
-#     backdoor_pos_fid    = str(explanation_dict_backdoor['pos_fids'][-1])
-#     backdoor_neg_fid    = str(explanation_dict_backdoor['neg_fids'][-1])
-#     backdoor_unfaith    = str(np.round(explanation_dict_backdoor['unfaiths'][-1],4))
-#     if explanation_dict_clean is not None:
-#         print('**Backdoor**')
-#     print('Ground Truth'.ljust(15),'Full Pred'.ljust(10),'Mask Pred'.ljust(10),'Pos Fid'.ljust(10),'Neg Fid'.ljust(10), 'Unfaith'.ljust(10))
-#     print(ground_truth.ljust(15), prediction.ljust(10), masked_prediction.ljust(10), backdoor_pos_fid.ljust(10), backdoor_neg_fid.ljust(10), backdoor_unfaith.ljust(10))
-
-
-
-# def load_saved_explainer(dataset,   original_index,     category,   attack_specs,   model_specs,    classifier_hyperparams,     explainer_hyperparams):
-#     explanation_path = get_explanation_path(dataset, category, original_index, model_specs, attack_specs, explainer_hyperparams, classifier_hyperparams)
-#     explainer_path   = get_explainer_path(dataset, category, original_index, model_specs, attack_specs, explainer_hyperparams, classifier_hyperparams)
-#     with open(explanation_path, 'rb') as f:
-#         explanation = pickle.load(f)
-#     with open(explainer_path, 'rb') as f:
-#         explainer = pickle.load(f)
-#     return explainer, explanation
-
-
 def my_fidelity(explanation: Explanation, explainer: Explainer, num_classes = 2) -> Tuple[float, float]:
     if explainer.model_config.mode == ModelMode.regression:
         raise ValueError("Fidelity not defined for 'regression' models")

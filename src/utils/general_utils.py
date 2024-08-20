@@ -191,7 +191,7 @@ def get_dataset_subfolder(attack_specs):
     dataset_subfolder = f'trigger_size_{trigger_size}_poison_rate_{poison_rate}{prob_str}{K_str}'
     prefices = []
     prefices.append(backdoor_type)
-    if graph_type is not None:
+    if backdoor_type != 'adaptive' and graph_type is not None:
         prefices.append(graph_type)
     dataset_subfolder = '_'.join(prefices) + '_' + dataset_subfolder
     return dataset_subfolder

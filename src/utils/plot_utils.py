@@ -36,9 +36,9 @@ def curly_braces(xmin,cutoff,xmax,yy,category, inequality,ax):
     y = yy + (.05*y - .01)*yspan
 
     text_x = (xmax+xmin)/2
-    if (category=='backdoor' and inequality=='less'):# or (category=='clean' and inequality=='more'):
+    if (category=='backdoor' and inequality=='less'):
         ax.text(text_x, yy+.07*yspan, f'Predict {category.title()}', ha='center', va='bottom', fontsize=14)
-    elif (category=='backdoor' and inequality=='more'):# or (category=='clean' and inequality=='less'):
+    elif (category=='backdoor' and inequality=='more'):
         ax.text(text_x, yy+.07*yspan, f'Predict {category.title()}', ha='center', va='bottom', fontsize=14)
     ax.plot(x, y, color='black', lw=1)
 
@@ -250,7 +250,7 @@ def plot_mol(graph,             ax=None,            edge_mask=None,     feat_mas
     if len(set(edge_styles))>1 and show_legend==True:
         legend_patches = [Line2D([0], [0], linestyle=style, color=plt.cm.Reds(1.0)[:3], lw=lw) for style in ['solid', 'dashed']]
         legend_labels = ['Clean Edge', 'Trigger']
-        ax.legend(legend_patches, legend_labels, loc='lower right')#,bbox_to_anchor=(0.5, -0.1))
+        ax.legend(legend_patches, legend_labels, loc='lower right')
     if cax is not None and feat_mask is not None and edge_mask_dict is not None:
         norm = matplotlib.colors.Normalize(vmin=edge_vmin, vmax=edge_vmax)
         colorbar = plt.cm.ScalarMappable(cmap='Reds', norm=norm)
@@ -620,7 +620,3 @@ def explainer_metrics_boxplot(df,metrics,plot=True,save_image=False, plot_path=N
     plt.tight_layout()
     if save_image==True:
         plt.savefig(plot_path)
-    # if plot == True:
-        # plt.show()
-    # else:
-    # plt.close()

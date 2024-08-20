@@ -619,34 +619,6 @@ class GIN3(torch.nn.Module):
         return F.log_softmax(x, dim=-1)
 
 
-# def reindex_nodes(data):
-#     unique_nodes = torch.unique(data.edge_index)
-#     mapping = {node.item(): i for i, node in enumerate(unique_nodes)}
-
-#     for i in range(data.edge_index.size(1)):
-#         data.edge_index[0, i] = mapping[data.edge_index[0, i].item()]
-#         data.edge_index[1, i] = mapping[data.edge_index[1, i].item()]
-#     return data
-
-
-# class EdgePerturbation(object):
-#     def __init__(self, edge_drop_prob=0.2, edge_add_prob=0.2):
-#         self.edge_drop_prob = edge_drop_prob
-#         self.edge_add_prob = edge_add_prob
-
-#     def __call__(self, data):
-#         # Drop edges
-#         edge_mask = torch.rand(data.edge_index.size(1)) > self.edge_drop_prob
-#         data.edge_index = data.edge_index[:, edge_mask]
-
-#         # Add edges
-#         num_nodes = data.num_nodes
-#         num_edges_add = int(self.edge_add_prob * data.edge_index.size(1))
-#         random_edges = torch.randint(0, num_nodes, (2, num_edges_add))
-#         data.edge_index = torch.cat([data.edge_index, random_edges], dim=1)
-
-#         return data
-
 class GATLayer(nn.Module):
     def __init__(self, num_heads=1, concat_heads=True, alpha=0.2, **kwargs):
         """

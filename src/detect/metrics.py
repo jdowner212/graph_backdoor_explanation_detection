@@ -40,7 +40,6 @@ from   utils.data_utils import *
 from   utils.general_utils import *
 from   utils.plot_utils import *
 from   explain.explainer_utils import *
-# from   detection.dataframe_utils import *
 
 import copy
 from   kneed import KneeLocator
@@ -51,21 +50,8 @@ from   sklearn.cluster import KMeans
 from   sklearn.mixture import GaussianMixture
 import torch
 from   torch_geometric.explain.algorithm.gnn_explainer import *
-
-
-# from   detection.metrics import *
 from   torch_geometric.explain.metric.faithfulness import unfaithfulness
 from   torch_geometric.explain.algorithm.gnn_explainer import *
-
-
-data_shape_dict = get_info('data_shape_dict')
-src_dir     = get_info('src_dir')
-data_dir    = get_info('data_dir')
-explain_dir = get_info('explain_dir')
-train_dir   = get_info('train_dir')
-train_dir_cln = get_info('train_dir_cln')
-metric_plot_info_dict = get_info('metric_plot_info_dict')
-
 
 
 data_shape_dict = get_info('data_shape_dict')

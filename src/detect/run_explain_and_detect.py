@@ -33,7 +33,6 @@ def parse_args():
     parser=argparse.ArgumentParser(description="GNNExplainer and backdoor detection: input arguments")
     parser.add_argument('--attack_target_label',        type=int,               default=0,              help='Class targeted by backdoor attack.')
     parser.add_argument('--backdoor_type',              type=str,               default='random',       help='Valid values: "random","adaptive","clean_label"')
-    # parser.add_argument('--contin_or_scratch',          type=str,               default='from_scratch', help='Set to "continuous" if you would like to continue refining a generator; otherwise, "from_scratch".')
     parser.add_argument('--dataset',                    type=str,               default='MUTAG',        help='Dataset to attack and explain.')
     parser.add_argument('--edge_reduction',             type=str,               default='sum',          help='Method for aggregating edges for computations by GNNExplainer.')
     parser.add_argument('--edge_size',                  type=float,             default=0.0001,         help='Coefficient on "edge size" term in GNNExplainer loss; larger value will reduce number of edges preserved by explanatory subgraph.')
@@ -80,9 +79,7 @@ def main():
         this_hyp_dict=hyp_dict_backdoor_adaptive
     these_classifier_hyperparams = this_hyp_dict[dataset][attack_target_label][model_hyp_set]
     model_type    = these_classifier_hyperparams['model_type']
-
     num_classes            = data_shape_dict[dataset]['num_classes']
-    # assert args.contin_or_scratch == 'continuous' or args.contin_or_scratch == 'from_scratch'
     
     these_explainer_hyperparams = build_explainer_hyperparams()
     these_explainer_hyperparams['threshold_config']['threshold_type'] = args.thresh_type
@@ -215,7 +212,6 @@ def main():
         '''      Load Dataset      '''
         ''''''''''''''''''''''''''''''
         random.seed(args.seed)
-        # gen_dataset_folder_ext = f'_{args.contin_or_scratch}'
         dataset_path = get_dataset_path(dataset, these_attack_specs, clean=False,gen_dataset_folder_ext='')
         with open(dataset_path,'rb') as f:
             dataset_dict_adaptive = pickle.load(f)
