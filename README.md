@@ -3,36 +3,30 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 
 # I. REPOSITORY STRUCTURE
 
-graph_backdoor_explanation_detection/
-├── README.md
-├── setup/
-│   ├── modify_torch_geometric_script.py
-│   └── requirements.txt
-├── src/
-│   ├── config.py
-│   ├── main.py
-│   └── attack/
-│       ├── backdoor_utils.py
-│       └── run_attack.py
-│       └── run_build_adaptive_generator.py
-│   └── detect/
-│       ├── metrics.py
-│       └── run_explain_and_detect.py
-│   └── explain/
-│       └── explainer_utils.py
-│   └── utils/
-│       ├── config.py
-│       └── data_utils.py
-│       └── general_utils.py
-│       └── models.py
-│       └── plot_utils.py
-├── data/
-│       ├── clean/
-│       └── poisoned/
-├── explainer_results/
-├── generators_adaptive_trigger/
-├── surrogate_models/
-└── training_results/
+	graph_backdoor_explanation_detection/
+	├── README.md
+	├── LICENSE
+	├── setup/
+	│   ├── modify_torch_geometric_script.py
+	│   └── requirements.txt
+	└── src/
+		├── config.py
+		├── main.py
+		├── attack/
+		│	├── backdoor_utils.py
+		│	├── run_attack.py
+		│   └── run_build_adaptive_generator.py
+		├── detect/
+		│	├── metrics.py
+		│   └── run_explain_and_detect.py
+		├── explain/
+		│   └── explainer_utils.py
+		└── utils/
+			├── config.py
+			├── data_utils.py
+			├── general_utils.py
+			├── models.py
+			└── plot_utils.py
 
 Empty folders will be populated running by experiments below.
 
@@ -120,7 +114,7 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 
 # III. INSTRUCTIONS FOR USE
 
-## 1. Setup environment
+## 1. Set up environment
 
 	a. Navigate to desired repository location
 	b. Run the following from the command line:
@@ -158,11 +152,9 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 		python setup/modify_torch_geometric_script.py
 	
 
-
-
 # RUN
 
-## Choose attack type, dataset, etc. (See /src/run.py for possible input arguments.)
+## Choose attack type, dataset, etc. (See /src/main.py for possible input arguments.)
 
 	- Main choices:
 
