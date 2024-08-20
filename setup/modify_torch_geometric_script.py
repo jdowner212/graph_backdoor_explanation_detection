@@ -3,7 +3,7 @@ import os
 
 # both paths will be changed by following setup instructions
 dir_to_modify = 'path/to/torch_geometric'
-modified_files_dir = 'path/to/graph_backdoor_explanation_detection/setup/modified_torch_geometric_files'
+modified_files_dir = 'path/to/code_appendix_repository/setup/modified_torch_geometric_files'
 
 extensions_to_modify = ['experimental.py',
                         'explain/algorithm/base.py',

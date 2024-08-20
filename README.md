@@ -3,7 +3,7 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 
 # I. REPOSITORY STRUCTURE
 
-	graph_backdoor_explanation_detection/
+	code_appendix_repository/
 	├── README.md
 	├── LICENSE
 	├── setup/
@@ -41,7 +41,7 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 
 # II. DESCRIPTION OF RELEVANT CODE
 
-## 1. graph_backdoor_explanation_detection/src/attack/backdoor_utils.py
+## 1. code_appendix_repository/src/attack/backdoor_utils.py
 
 This file contains functions necessary for attacking datasets and training GNNs on the result. 
 
@@ -72,7 +72,7 @@ This file contains functions necessary for attacking datasets and training GNNs 
 	-- train_loop_backdoor()
 		Training of GNN on poisoned dataset
 
-## 2. graph_backdoor_explanation_detection/src/explain/explainer_utils.py
+## 2. code_appendix_repository/src/explain/explainer_utils.py
 
 Functions for training explainer algorithms and returning explanations. In particular, GNNExplainer is important here, as it is used in our main experiments. See "GNN Explanation" on page 3 of our paper for more details on this process.
 
@@ -82,7 +82,7 @@ Functions for training explainer algorithms and returning explanations. In parti
 		Function for training explainer (by default, GNNExplainer) and obtaining explanation on data input.
 		GNNExplainer algorithm described on page 3 in our paper, and used in detection metrics and experiments throughout. 
 
-## 3. graph_backdoor_explanation_detection/src/detect/metrics.py
+## 3. code_appendix_repository/src/detect/metrics.py
 
 This file contains functions pertaining to the 7 novel metrics introduced in our paper.
 
@@ -124,11 +124,10 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 
 ## 1. Set up environment
 
-	a. Navigate to desired repository location
+	a. Navigate to the repository
 	b. Run the following from the command line:
 		conda create --name graph_backdoor_detection_env python=3.8.16
     	conda activate graph_backdoor_detection_env
-		cd graph_backdoor_explanation_detection
 		pip install -r setup/requirements.txt
 
 ## 2. Set repository path for code to reference
