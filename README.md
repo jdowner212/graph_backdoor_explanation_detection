@@ -22,7 +22,6 @@ This file contains two sections: (I) Repository Structure, (II) Description of R
 		├── explain/
 		│   └── explainer_utils.py
 		└── utils/
-			├── config.py
 			├── data_utils.py
 			├── general_utils.py
 			├── models.py
@@ -127,9 +126,9 @@ This file contains functions pertaining to the 7 novel metrics introduced in our
 	- Run the following from the command line:
 		repository_path="$(pwd)"
 		if [[ "$OSTYPE" == "darwin"* ]]; then
-			sed -i '' "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/utils/config.py"
+			sed -i '' "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/config.py"
 		else
-			sed -i "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/utils/config.py"
+			sed -i "s|root_dir = .*|root_dir = '$repository_path'|" "$repository_path/src/config.py"
 		fi
 
 ## 2. Make necessary modifications to installed torch_geometric package
