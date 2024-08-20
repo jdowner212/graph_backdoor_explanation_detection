@@ -1,6 +1,5 @@
 old_functions.py
 environment.yml
-modify_torch_geometric_script.py
 src/detect/dataframe_utils_ignore.py
 src/detect/explain_geometry_ignore.py
 src/detect/explainer_detection_metrics_ignore.py
