@@ -1,9 +1,9 @@
 import shutil
 import os
 
-''' TODO: modify paths '''
-dir_to_modify = '/opt/homebrew/Caskroom/miniforge/base/envs/graph_backdoor_detection/lib/python3.8/site-packages/torch_geometric'
-modified_files_dir = '/Users/janedowner/Desktop/Desktop/IDEAL/Project_1/repo_pub/setup/modified_torch_geometric_files'
+# both paths will be changed by following setup instructions
+dir_to_modify = 'path/to/torch_geometric'
+modified_files_dir = 'path/to/graph_backdoor_explanation_detection/setup/modified_torch_geometric_files'
 
 extensions_to_modify = ['experimental.py',
                         'explain/algorithm/base.py',
