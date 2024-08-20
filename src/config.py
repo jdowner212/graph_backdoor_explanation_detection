@@ -1,4 +1,4 @@
-''' SET TO REPOSITORY PATH '''
+# path will be changed by following setup instructions
 root_dir = '/path/to/graph_backdoor_explanation_detection'
 
 
