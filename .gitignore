@@ -3,3 +3,4 @@ environment.yml
 src/detect/dataframe_utils_ignore.py
 src/detect/explain_geometry_ignore.py
 src/detect/explainer_detection_metrics_ignore.py
+LICENSE
